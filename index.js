@@ -55,7 +55,7 @@ const gameObjects = {
     icicle: {
         x: CANVAS_WIDTH/2 - 36,
         y: CANVAS_HEIGHT/2 - 22, // Starting position
-        originalY: CANVAS_HEIGHT/2 - 34, // Remember original position
+        originalY: CANVAS_HEIGHT/2 - 22, // Remember original position
         fallDistance: 0, // How far it has fallen
         maxFallDistance: 122, // Maximum fall distance
         fallPerClick: 122/16, // Pixels to fall per click
@@ -93,7 +93,8 @@ const gameObjects = {
         maxAddFrame: 92, // Maximum frame for add snow (up to frame 92)
         isStartupComplete: false,
         isAnimating: false, // Don't start animating immediately - wait for game to start
-        stillImage: 'Sorted Assets/sprites/Snowpile_Player1/1.svg' // Start with frame 1
+        stillImage: 'Sorted Assets/sprites/Snowpile_Player1/1.svg', // Start with frame 1
+        snowAmountLeft: 46
     },
     
     // AimGuide for Player 1 - mirrored and positioned on right side
@@ -126,6 +127,13 @@ const gameObjects = {
 const animations = {
     IcicleShakes: [],
     MonkeyAnimations: [],
+    MonkeyWin: [],
+    MonkeyLose: [],
+    MonkeyHit: [],
+    MonkeyGetUp: [],
+    MonkeyAddSnow: [],
+    MonkeyAim: [],
+    MonkeyFire: [],
     TurretFires: [],
     SnowpileStartups: [], // For the initial 1-46 frame animation
     SnowpileAdds: [], // For additional snow animations
@@ -146,60 +154,157 @@ const animationTemplates = {
         frameTime: 100, // milliseconds per frame
         loop: false
     },
-
-    // New monkey animation
-    MonkeyAnimation: {
+    MonkeyIdle: {
         frames: [
             'Sorted Assets/sprites/MonkeyIdle_Player1/1.svg',
-            'Sorted Assets/sprites/MonkeyIdle_Player1/2.svg',
-            'Sorted Assets/sprites/MonkeyIdle_Player1/3.svg',
-            'Sorted Assets/sprites/MonkeyIdle_Player1/4.svg',
-            // Add more frames as needed
         ],
-        frameTime: 150, // Slightly slower animation
-        loop: false // Or true if you want it to loop
+        frameTime: 120,
+        loop: true
     },
-    
-    // Turret firing animation
-    TurretFire: {
+    MonkeyWin: {
         frames: [
-            'Sorted Assets/sprites/TurretExtension_Player1/1.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/2.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/3.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/4.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/5.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/6.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/7.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/8.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/9.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/10.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/11.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/12.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/13.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/14.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/15.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/16.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/17.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/18.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/19.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/20.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/21.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/22.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/23.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/24.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/25.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/26.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/27.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/28.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/29.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/30.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/31.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/32.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/33.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/34.svg',
-            'Sorted Assets/sprites/TurretExtension_Player1/35.svg'
+            'Sorted Assets/sprites/MonkeyWin_Player1/117.svg',
+            'Sorted Assets/sprites/MonkeyWin_Player1/118.svg',
+            'Sorted Assets/sprites/MonkeyWin_Player1/119.svg',
+            'Sorted Assets/sprites/MonkeyWin_Player1/120.svg',
+            'Sorted Assets/sprites/MonkeyWin_Player1/121.svg',
+            'Sorted Assets/sprites/MonkeyWin_Player1/122.svg',
+            'Sorted Assets/sprites/MonkeyWin_Player1/123.svg',
         ],
-        frameTime: 40,
+        frameTime: 150,
+        loop: false
+    },
+    MonkeyLose: {
+        frames: [
+            'Sorted Assets/sprites/MonkeyLose_Player1/124.svg',
+            'Sorted Assets/sprites/MonkeyLose_Player1/125.svg',
+            'Sorted Assets/sprites/MonkeyLose_Player1/126.svg',
+            'Sorted Assets/sprites/MonkeyLose_Player1/127.svg',
+            'Sorted Assets/sprites/MonkeyLose_Player1/128.svg',
+            'Sorted Assets/sprites/MonkeyLose_Player1/129.svg',
+            'Sorted Assets/sprites/MonkeyLose_Player1/130.svg',
+            'Sorted Assets/sprites/MonkeyLose_Player1/131.svg',
+            'Sorted Assets/sprites/MonkeyLose_Player1/132.svg',
+            'Sorted Assets/sprites/MonkeyLose_Player1/133.svg',
+        ],
+        frameTime: 120,
+        loop: false
+    },
+    MonkeyHit: {
+        frames: [
+            'Sorted Assets/sprites/MonkeyHit_Player1/95.svg',
+            'Sorted Assets/sprites/MonkeyHit_Player1/96.svg',
+            'Sorted Assets/sprites/MonkeyHit_Player1/97.svg',
+            'Sorted Assets/sprites/MonkeyHit_Player1/98.svg',
+            'Sorted Assets/sprites/MonkeyHit_Player1/99.svg',
+            'Sorted Assets/sprites/MonkeyHit_Player1/100.svg',
+            'Sorted Assets/sprites/MonkeyHit_Player1/101.svg',
+            'Sorted Assets/sprites/MonkeyHit_Player1/102.svg',
+            'Sorted Assets/sprites/MonkeyHit_Player1/103.svg',
+            'Sorted Assets/sprites/MonkeyHit_Player1/104.svg',
+        ],
+        frameTime: 100,
+        loop: false
+    },
+    MonkeyGetUp: {
+        frames: [
+            'Sorted Assets/sprites/MonkeyGetUp_Player1/105.svg',
+            'Sorted Assets/sprites/MonkeyGetUp_Player1/106.svg',
+            'Sorted Assets/sprites/MonkeyGetUp_Player1/107.svg',
+            'Sorted Assets/sprites/MonkeyGetUp_Player1/108.svg',
+            'Sorted Assets/sprites/MonkeyGetUp_Player1/109.svg',
+            'Sorted Assets/sprites/MonkeyGetUp_Player1/110.svg',
+            'Sorted Assets/sprites/MonkeyGetUp_Player1/111.svg',
+            'Sorted Assets/sprites/MonkeyGetUp_Player1/112.svg',
+            'Sorted Assets/sprites/MonkeyGetUp_Player1/113.svg',
+            'Sorted Assets/sprites/MonkeyGetUp_Player1/114.svg',
+            'Sorted Assets/sprites/MonkeyGetUp_Player1/115.svg',
+            'Sorted Assets/sprites/MonkeyGetUp_Player1/116.svg',
+        ],
+        frameTime: 100,
+        loop: false
+    },
+    MonkeyAddSnow: {
+        frames: [
+            'Sorted Assets/sprites/MonkeyAddSnow_Player1/81.svg',
+            'Sorted Assets/sprites/MonkeyAddSnow_Player1/82.svg',
+            'Sorted Assets/sprites/MonkeyAddSnow_Player1/83.svg',
+            'Sorted Assets/sprites/MonkeyAddSnow_Player1/84.svg',
+            'Sorted Assets/sprites/MonkeyAddSnow_Player1/85.svg',
+            'Sorted Assets/sprites/MonkeyAddSnow_Player1/86.svg',
+            'Sorted Assets/sprites/MonkeyAddSnow_Player1/87.svg',
+            'Sorted Assets/sprites/MonkeyAddSnow_Player1/88.svg',
+            'Sorted Assets/sprites/MonkeyAddSnow_Player1/89.svg',
+            'Sorted Assets/sprites/MonkeyAddSnow_Player1/90.svg',
+            'Sorted Assets/sprites/MonkeyAddSnow_Player1/91.svg',
+            'Sorted Assets/sprites/MonkeyAddSnow_Player1/92.svg',
+            'Sorted Assets/sprites/MonkeyAddSnow_Player1/93.svg',
+        ],
+        frameTime: 30,
+        loop: false
+    },
+    MonkeyAim: {
+        frames: [
+            'Sorted Assets/sprites/MonkeyAim_Player1/13.svg'
+        ],
+        frameTime: 80,
+        loop: true
+    },
+    MonkeyFire: {
+        frames: [
+            'Sorted Assets/sprites/MonkeyFire_Player1/30.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/31.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/32.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/33.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/34.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/35.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/36.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/37.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/38.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/39.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/40.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/41.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/42.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/43.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/44.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/45.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/46.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/47.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/48.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/49.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/50.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/51.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/52.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/53.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/54.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/55.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/56.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/57.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/58.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/59.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/60.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/61.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/62.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/63.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/64.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/65.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/66.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/67.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/68.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/69.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/70.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/71.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/72.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/73.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/74.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/75.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/76.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/77.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/78.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/79.svg',
+            'Sorted Assets/sprites/MonkeyFire_Player1/80.svg',
+        ],
+        frameTime: 60,
         loop: false
     },
     
@@ -309,6 +414,14 @@ const animationTemplates = {
         ],
         frameTime: 100,
         loop: false
+    },
+    
+    TurretFire: {
+        frames: [
+            'Sorted Assets/sprites/TurretExtension_Player1/1.svg' // Placeholder, replace with actual fire frames if available
+        ],
+        frameTime: 80,
+        loop: false
     }
 };
 
@@ -333,26 +446,28 @@ function createAnimation(templateName, x, y) {
 function triggerAnimation(type, x, y) {
     const animation = createAnimation(type, x, y);
     if (animation) {
-        animations[type + 's'].push(animation);
-        
-        // If it's an icicle shake, mark the icicle as animating
-        if (type === 'IcicleShake') {
-            gameObjects.icicle.isAnimating = true;
-        }
-
-        // If it's a monkey animation, mark the monkey as animating
-        if (type === 'MonkeyAnimation') {
+        // For monkey animations, use the correct array name (no 's' at the end)
+        if ([
+            'MonkeyIdle', 'MonkeyWin', 'MonkeyLose', 'MonkeyHit',
+            'MonkeyGetUp', 'MonkeyAddSnow', 'MonkeyAim', 'MonkeyFire'
+        ].includes(type)) {
+            animations[type].push(animation);
             gameObjects.monkey.isAnimating = true;
-        }
-        
-        // If it's a turret fire, mark the turret as animating
-        if (type === 'TurretFire') {
-            gameObjects.turret.isAnimating = true;
-        }
-        
-        // If it's a snowpile animation, mark the snowpile as animating
-        if (type === 'SnowpileStartup' || type === 'SnowpileAdd') {
-            gameObjects.snowpile.isAnimating = true;
+        } else {
+            // For all other types, use the pluralized array
+            animations[type + 's'].push(animation);
+            // If it's an icicle shake, mark the icicle as animating
+            if (type === 'IcicleShake') {
+                gameObjects.icicle.isAnimating = true;
+            }
+            // If it's a turret fire, mark the turret as animating
+            if (type === 'TurretFire') {
+                gameObjects.turret.isAnimating = true;
+            }
+            // If it's a snowpile animation, mark the snowpile as animating
+            if (type === 'SnowpileStartup' || type === 'SnowpileAdd') {
+                gameObjects.snowpile.isAnimating = true;
+            }
         }
     }
 }
@@ -508,28 +623,51 @@ function optimizedSVGLoading() {
         'Sorted Assets/sprites/Snowpile_Player1/47.svg',
         'Sorted Assets/sprites/TurretExtension_Player1/1.svg',
         'Sorted Assets/sprites/MonkeyIdle_Player1/1.svg',
+        'Sorted Assets/sprites/MonkeyWin_Player1/117.svg',
+        'Sorted Assets/sprites/MonkeyLose_Player1/124.svg',
+        'Sorted Assets/sprites/MonkeyHit_Player1/95.svg',
+        'Sorted Assets/sprites/MonkeyGetUp_Player1/105.svg',
+        'Sorted Assets/sprites/MonkeyAddSnow_Player1/81.svg',
+        'Sorted Assets/sprites/MonkeyAim_Player1/13.svg',
+        'Sorted Assets/sprites/MonkeyFire_Player1/30.svg',
         'Sorted Assets/sprites/Icicle Shake/1.svg',
         'Sorted Assets/sprites/AimGuide_Player2/1.svg',
         'Sorted Assets/sprites/AimSlider/1.svg',
-        'Sorted Assets/sprites/AimSlider/2.svg'
+        'Sorted Assets/sprites/AimSlider/2.svg',
+        'Sorted Assets/sprites/FloorAndCeiling/574.svg'
     ];
     
     // Phase 2: High Priority - User will likely need these soon (loads in first 500ms)
     const highPriority = [
         ...Array.from({length: 7}, (_, i) => `Sorted Assets/sprites/Icicle Shake/${i + 1}.svg`),
         ...Array.from({length: 15}, (_, i) => `Sorted Assets/sprites/TurretExtension_Player1/${i + 1}.svg`),
-        ...Array.from({length: 20}, (_, i) => `Sorted Assets/sprites/Snowpile_Player1/${i + 1}.svg`)
+        ...Array.from({length: 46}, (_, i) => `Sorted Assets/sprites/Snowpile_Player1/${i + 1}.svg`),
+        // MonkeyIdle 1-12
+        ...Array.from({length: 12}, (_, i) => `Sorted Assets/sprites/MonkeyIdle_Player1/${i + 1}.svg`),
+        // MonkeyWin 117-123
+        ...Array.from({length: 7}, (_, i) => `Sorted Assets/sprites/MonkeyWin_Player1/${i + 117}.svg`),
+        // MonkeyLose 124-133
+        ...Array.from({length: 10}, (_, i) => `Sorted Assets/sprites/MonkeyLose_Player1/${i + 124}.svg`),
+        // MonkeyHit 95-104
+        ...Array.from({length: 10}, (_, i) => `Sorted Assets/sprites/MonkeyHit_Player1/${i + 95}.svg`),
+        // MonkeyGetUp 105-116
+        ...Array.from({length: 12}, (_, i) => `Sorted Assets/sprites/MonkeyGetUp_Player1/${i + 105}.svg`),
+        // MonkeyAddSnow 81-93
+        ...Array.from({length: 14}, (_, i) => `Sorted Assets/sprites/MonkeyAddSnow_Player1/${i + 81}.svg`),
+        // MonkeyAim 13-29
+        ...Array.from({length: 17}, (_, i) => `Sorted Assets/sprites/MonkeyAim_Player1/${i + 13}.svg`),
+        // MonkeyFire 30-80
+        ...Array.from({length: 51}, (_, i) => `Sorted Assets/sprites/MonkeyFire_Player1/${i + 30}.svg`)
     ];
     
     // Phase 3: Medium Priority - Background loading (loads gradually over 3 seconds)
     const mediumPriority = [
-        ...Array.from({length: 25}, (_, i) => `Sorted Assets/sprites/Snowpile_Player1/${i + 21}.svg`),
-        ...Array.from({length: 20}, (_, i) => `Sorted Assets/sprites/TurretExtension_Player1/${i + 16}.svg`),
-        ...Array.from({length: 4}, (_, i) => `Sorted Assets/sprites/MonkeyIdle_Player1/${i + 1}.svg`)
+        ...Array.from({length: 20}, (_, i) => `Sorted Assets/sprites/TurretExtension_Player1/${i + 16}.svg`)
+        // No need to add monkey frames here, all are in highPriority
     ];
     
     // Phase 4: On-Demand - Only load when S key is pressed (saves bandwidth)
-    const onDemand = Array.from({length: 47}, (_, i) => `Sorted Assets/sprites/Snowpile_Player1/${i + 47}.svg`);
+    const onDemand = Array.from({length: 46}, (_, i) => `Sorted Assets/sprites/Snowpile_Player1/${i + 47}.svg`);
     
     console.log(`Phase 1: Loading ${critical.length} critical SVGs...`);
     
@@ -623,7 +761,25 @@ function updateAnimations(deltaTime) {
                         anim.currentFrame = 0; // Loop back to start
                     } else {
                         anim.finished = true;
-                        
+
+                        // If monkey animation finished, reset state and set idle image
+                        if (
+                            animationType === 'MonkeyWin' ||
+                            animationType === 'MonkeyLose' ||
+                            animationType === 'MonkeyHit' ||
+                            animationType === 'MonkeyGetUp' ||
+                            animationType === 'MonkeyAddSnow' ||
+                            animationType === 'MonkeyAim' ||
+                            animationType === 'MonkeyFire'
+                        ) {
+                            gameObjects.monkey.isAnimating = false;
+                            gameObjects.monkey.stillImage = animationTemplates.MonkeyIdle.frames[0];
+                            if (gameObjects.monkey._onComplete) {
+                                gameObjects.monkey._onComplete();
+                                gameObjects.monkey._onComplete = null;
+                            }
+                        }
+
                         // If icicle shake animation finished, reset state
                         if (animationType === 'IcicleShakes') {
                             gameObjects.icicle.isAnimating = false;
@@ -695,21 +851,23 @@ function render() {
         drawSprite(gameObjects.icicle.stillImage, gameObjects.icicle.x, gameObjects.icicle.y);
     }
     
-    // Draw non-snowpile animations BEFORE floor/ceiling
-    drawAnimationsExceptSnowpile();
-    
-    // Static obstacles/terrain that should be behind floor/ceiling
-    // drawSprite('Sorted Assets/sprites/MetalObstacle/1.svg', 300, 250);
-    // drawSprite('Sorted Assets/sprites/IceBlockDamaged/1.svg', 200, 200);
-    
-    // ===========================================
-    // FOREGROUND LAYER (Floor and ceiling on top)
-    // ===========================================
-    
     // Floor and ceiling - drawn AFTER icicle so they appear in front
     drawSprite('Sorted Assets/sprites/FloorAndCeiling/1.svg', 0, -50);
 
-    // Draw turret - either still image with rotation or let animation system handle it
+        // Draw snowpile - always show it (before, during, and after startup)
+    // Draw both static snowpile AND snowpile animations AFTER floor/ceiling
+    setClippingRegion(0, 0, CANVAS_WIDTH, 385);
+    
+    // Draw snowpile animations (startup/add) - these should be in front of floor/ceiling
+    drawSnowpileAnimations();
+    
+    if (!gameObjects.snowpile.isAnimating) {
+        // Always draw the current still image when not animating
+        drawSprite(gameObjects.snowpile.stillImage, gameObjects.snowpile.x, gameObjects.snowpile.y);
+    }
+    
+    clearClippingRegion();
+
     if (!gameObjects.turret.isAnimating) {
         drawRotatedSprite(
             gameObjects.turret.stillImage, 
@@ -720,6 +878,25 @@ function render() {
             gameObjects.turret.angle
         );
     }
+
+    // Draw non-snowpile animations BEFORE floor/ceiling
+    drawAnimationsExceptSnowpile();
+    
+        // Floor Extra Middle Bit - drawn AFTER icicle animation so they appear in front
+    drawSprite('Sorted Assets/sprites/FloorAndCeiling/574.svg', 248, 374.5);
+
+    // Static obstacles/terrain that should be behind floor/ceiling
+    // drawSprite('Sorted Assets/sprites/MetalObstacle/1.svg', 300, 250);
+    // drawSprite('Sorted Assets/sprites/IceBlockDamaged/1.svg', 200, 200);
+    
+    // ===========================================
+    // FOREGROUND LAYER (Floor and ceiling on top)
+    // ===========================================
+    
+
+
+    // Draw turret - either still image with rotation or let animation system handle it
+
 
     // Draw Aim Slider (Player 1) - rotates with turret, above floor/ceiling
     const aimSlider = gameObjects.aimSlider;
@@ -735,19 +912,7 @@ function render() {
         aimSlider.angle
     );
     
-    // Draw snowpile - always show it (before, during, and after startup)
-    // Draw both static snowpile AND snowpile animations AFTER floor/ceiling
-    setClippingRegion(0, 0, CANVAS_WIDTH, 385);
-    
-    // Draw snowpile animations (startup/add) - these should be in front of floor/ceiling
-    drawSnowpileAnimations();
-    
-    if (!gameObjects.snowpile.isAnimating) {
-        // Always draw the current still image when not animating
-        drawSprite(gameObjects.snowpile.stillImage, gameObjects.snowpile.x, gameObjects.snowpile.y);
-    }
-    
-    clearClippingRegion();
+
     
     // Draw monkey After floor/ceiling so it appears in front of them
     if (!gameObjects.monkey.isAnimating) {
@@ -982,6 +1147,33 @@ document.addEventListener('keydown', (e) => {
     if (e.code === 'KeyT') {
         togglePlayerTurn();
     }
+    if (e.code === 'KeyI' && !gameObjects.icicle.isAnimating && gameObjects.icicle.fallDistance < gameObjects.icicle.maxFallDistance) {
+        // Drop icicle before shake animation
+        const icicle = gameObjects.icicle;
+        if (icicle.fallDistance < icicle.maxFallDistance) {
+            icicle.fallDistance += icicle.fallPerClick;
+            if (icicle.fallDistance >= icicle.maxFallDistance) icicle.fallDistance = icicle.maxFallDistance;
+            icicle.y = icicle.originalY + icicle.fallDistance;
+            console.log(`Icicle dropped: fallDistance=${icicle.fallDistance}, y=${icicle.y}`);
+        }
+        triggerAnimation('IcicleShake', icicle.x, icicle.y);
+    }
+    // Monkey Animations Testing Shortcuts
+    if (e.code === 'Digit1') {
+        playMonkeyAnimation('MonkeyIdle');
+    }
+    if (e.code === 'Digit2' && !gameObjects.monkey.isAnimating) {
+        playMonkeyAnimation('MonkeyWin');
+    }
+    if (e.code === 'Digit3' && !gameObjects.monkey.isAnimating) {
+        playMonkeyAnimation('MonkeyLose');
+    }
+    if (e.code === 'Digit4' && !gameObjects.monkey.isAnimating) {
+        playMonkeyAnimation('MonkeyHit');
+    }
+    if (e.code === 'Digit5' && !gameObjects.monkey.isAnimating) {
+        playMonkeyAnimation('MonkeyGetUp');
+    }
 });
 
 document.addEventListener('keyup', (e) => {
@@ -1098,11 +1290,14 @@ function addSnow() {
     }
     
     // Only allow adding snow if startup is complete, not animating, and hasn't reached max frame
-    if (snowpile.isStartupComplete && !snowpile.isAnimating && snowpile.currentFrame < snowpile.maxAddFrame) {
+    if (snowpile.isStartupComplete && !snowpile.isAnimating && snowpile.currentFrame < snowpile.maxAddFrame && !gameObjects.monkey.isAnimating) {
         console.log(`Adding snow to pile! Current frame: ${snowpile.currentFrame}, going to frame: ${snowpile.currentFrame + 1}`);
         
         // Increment current frame immediately
         snowpile.currentFrame++;
+        playMonkeyAnimation('MonkeyAddSnow');
+        gameObjects.snowpile.snowAmountLeft += -1;
+        console.log(`Snow amount left: ${gameObjects.snowpile.snowAmountLeft}`);
         
         // Update still image to the new frame immediately
         snowpile.stillImage = `Sorted Assets/sprites/Snowpile_Player1/${snowpile.currentFrame}.svg`;
@@ -1123,4 +1318,15 @@ function addSnow() {
 function togglePlayerTurn() {
     gameObjects.aimSlider.isActive = !gameObjects.aimSlider.isActive;
     console.log('Aim Slider is now', gameObjects.aimSlider.isActive ? 'ACTIVE (1.svg)' : 'INACTIVE (2.svg)');
+}
+
+// Helper to play monkey animation and return to idle
+function playMonkeyAnimation(type, onComplete) {
+    if (!animationTemplates[type]) return;
+    triggerAnimation(type, gameObjects.monkey.x, gameObjects.monkey.y);
+    gameObjects.monkey.isAnimating = true;
+    // No setTimeout here! Let updateAnimations handle returning to idle.
+    if (onComplete) {
+        gameObjects.monkey._onComplete = onComplete;
+    }
 }
