@@ -1,6 +1,12 @@
 // ===========================================
 // TURRET GAME PRACTICE CANVAS SETUP
 // ===========================================
+// ===========================================
+// Game Variables
+// ===========================================
+
+let isPlayer1Turn = true; // true = Player 1's turn, false = Player 2's turn
+
 
 // GAME CONFIGURATION
 // Change this value to scale the entire canvas and everything on it
@@ -116,7 +122,27 @@ const gameObjects = {
         isActive: true,
         activeImage: 'Sorted Assets/sprites/AimSlider/1.svg',
         inactiveImage: 'Sorted Assets/sprites/AimSlider/2.svg'
-    }
+    },
+    
+    // powerScale for Player 1
+    powerScale1: {
+        x: -12, // Match turret.x
+        y: 220, // Match turret.y
+        centerX: -12, // Match turret.centerX
+        centerY: 220, // Match turret.centerY
+        isActive: true,
+        isPowerScaleExtending: false,
+        stillImage: 'Sorted Assets/sprites/PowerScale_Player2/1.svg',
+    },
+    // snowScale for Player 1
+    snowScale1: {
+        x: 167, // Match turret.x
+        y: 300, // Match turret.y
+        centerX: 100, // Match turret.centerX
+        centerY: 379, // Match turret.centerY
+        isActive: true,
+        stillImage: 'Sorted Assets/sprites/SnowScale_Player2/1.svg',
+    },
 };
 
 // ===========================================
@@ -137,6 +163,8 @@ const animations = {
     MonkeyFire: [],
     SnowpileStartups: [], // For the initial 1-46 frame animation
     SnowpileAdds: [], // For additional snow animations
+    PowerScale1s: [],
+    SnowScale1s: [],
 };
 
 // Animation templates - define your animations here
@@ -454,6 +482,65 @@ const animationTemplates = {
             'Sorted Assets/sprites/TurretExtension_Player1/34.svg',
             'Sorted Assets/sprites/TurretExtension_Player1/35.svg',
         ],
+        frameTime: 30,
+        loop: false
+    },
+
+    PowerScale1:{
+        frames: [
+            'Sorted Assets/sprites/PowerScale_Player2/1.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/2.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/3.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/4.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/5.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/6.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/7.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/8.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/9.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/10.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/11.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/12.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/13.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/14.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/15.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/16.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/17.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/18.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/19.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/20.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/21.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/22.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/23.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/24.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/25.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/26.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/27.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/28.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/29.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/30.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/31.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/32.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/33.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/34.svg',
+            'Sorted Assets/sprites/PowerScale_Player2/35.svg',
+        ],
+        frameTime: 30,
+        loop: false
+    },
+
+    SnowScale1:{
+        frames: [
+            'Sorted Assets/sprites/SnowScale_Player2/1.svg',
+            'Sorted Assets/sprites/SnowScale_Player2/2.svg',
+            'Sorted Assets/sprites/SnowScale_Player2/3.svg',
+            'Sorted Assets/sprites/SnowScale_Player2/4.svg',
+            'Sorted Assets/sprites/SnowScale_Player2/5.svg',
+            'Sorted Assets/sprites/SnowScale_Player2/6.svg',
+            'Sorted Assets/sprites/SnowScale_Player2/7.svg',
+            'Sorted Assets/sprites/SnowScale_Player2/8.svg',
+            'Sorted Assets/sprites/SnowScale_Player2/9.svg',
+            'Sorted Assets/sprites/SnowScale_Player2/10.svg',
+        ],
         frameTime: 50,
         loop: false
     }
@@ -497,6 +584,9 @@ function triggerAnimation(type, x, y) {
             // If it's a turret fire, mark the turret as animating
             if (type === 'TurretFire') {
                 gameObjects.turret.isAnimating = true;
+            }
+            if (type === 'PowerScale1') {
+                gameObjects.powerScale1.isPowerScaleExtending = true;
             }
             // If it's a snowpile animation, mark the snowpile as animating
             if (type === 'SnowpileStartup' || type === 'SnowpileAdd') {
@@ -668,7 +758,10 @@ function optimizedSVGLoading() {
         'Sorted Assets/sprites/AimGuide_Player2/1.svg',
         'Sorted Assets/sprites/AimSlider/1.svg',
         'Sorted Assets/sprites/AimSlider/2.svg',
-        'Sorted Assets/sprites/FloorAndCeiling/574.svg'
+        'Sorted Assets/sprites/FloorAndCeiling/574.svg',
+        'Sorted Assets/sprites/PowerScale_Player2/1.svg',
+        'Sorted Assets/sprites/Chimney/1.svg',
+        'Sorted Assets/sprites/Chimney/2.svg',
     ];
     
     // Phase 2: High Priority - User will likely need these soon (loads in first 500ms)
@@ -699,6 +792,10 @@ function optimizedSVGLoading() {
         ...Array.from({length: 10}, (_, i) => `Sorted Assets/sprites/MonkeyLose_Player1/${i + 124}.svg`),
         // Icicle Shake
         ...Array.from({length: 7}, (_, i) => `Sorted Assets/sprites/Icicle Shake/${i + 1}.svg`),
+        // PowerScale1 1-35
+        ...Array.from({length: 35}, (_, i) => `Sorted Assets/sprites/PowerScale_Player2/${i + 1}.svg`),
+        // SnowScale1 1-10
+        ...Array.from({length: 10}, (_, i) => `Sorted Assets/sprites/SnowScale_Player2/${i + 1}.svg`),
     ];
     
     // Phase 4: On-Demand - Only load when S key is pressed (saves bandwidth)
@@ -786,6 +883,9 @@ function updateAnimations(deltaTime) {
             if (animationType === 'TurretFires' && anim.paused) {
                 continue; // Skip advancing this animation if paused
             }
+            if (animationType === 'PowerScale1s' && anim.paused) {
+                continue; // Skip advancing this animation if paused
+            }
             
             anim.timeSinceLastFrame += deltaTime;
             
@@ -796,6 +896,11 @@ function updateAnimations(deltaTime) {
 
             // Special handling for TurretFires: freeze on last frame if looping
                 if (animationType === 'TurretFires' && anim.loop && anim.currentFrame >= anim.frames.length) {
+                    anim.currentFrame = anim.frames.length - 1; // Stay on last frame
+                    anim.paused = true; // Pause so it doesn't advance further
+                    continue;
+                }    
+                if (animationType === 'PowerScale1s' && anim.loop && anim.currentFrame >= anim.frames.length) {
                     anim.currentFrame = anim.frames.length - 1; // Stay on last frame
                     anim.paused = true; // Pause so it doesn't advance further
                     continue;
@@ -840,6 +945,10 @@ function updateAnimations(deltaTime) {
                         if (animationType === 'TurretFires') {
                             gameObjects.turret.isAnimating = false;
                         }
+
+                        if (animationType === 'PowerScale1s') {
+                            gameObjects.turret.isAnimating = false;
+                        }
                         
                         // If snowpile startup animation finished, mark startup complete
                         if (animationType === 'SnowpileStartups') {
@@ -878,6 +987,14 @@ function render() {
     // Background
     drawSprite('Sorted Assets/sprites/Background/Background.svg', 0, 0);
     
+    const chimneyX = -30;
+    const chimneyY = -45;
+    if (isPlayer1Turn) {
+    drawSprite('Sorted Assets/sprites/Chimney/2.svg', chimneyX, chimneyY);
+    } else {
+    drawSprite('Sorted Assets/sprites/Chimney/2.svg', chimneyX, chimneyY);
+    }
+
     // AimGuide_Player2 - drawn above background but behind all other elements
     if (gameObjects.aimGuidePlayer1.isVisible) {
         drawMirroredSprite(
@@ -931,6 +1048,7 @@ function render() {
         // Floor Extra Middle Bit - drawn AFTER icicle animation so they appear in front
     drawSprite('Sorted Assets/sprites/FloorAndCeiling/574.svg', 248, 374.5);
 
+
     // Static obstacles/terrain that should be behind floor/ceiling
     // drawSprite('Sorted Assets/sprites/MetalObstacle/1.svg', 300, 250);
     // drawSprite('Sorted Assets/sprites/IceBlockDamaged/1.svg', 200, 200);
@@ -976,6 +1094,31 @@ function render() {
     // UI LAYER (Always on top)
     // ===========================================
     
+   // Draw PowerScale1 (shows animated frame if animating, otherwise still image)
+    const powerScaleAngle = -Math.PI * 50 / 180; // 45 degrees anticlockwise
+    const powerScale = gameObjects.powerScale1;
+    if (animations.PowerScale1s.length > 0) {
+    const anim = animations.PowerScale1s[0];
+    drawRotatedSprite(
+        anim.frames[anim.currentFrame],
+        powerScale.x,
+        powerScale.y,
+        powerScale.centerX,
+        powerScale.centerY,
+        powerScaleAngle
+    );
+    } else {
+    drawRotatedSprite(
+        powerScale.stillImage,
+        powerScale.x,
+        powerScale.y,
+        powerScale.centerX,
+        powerScale.centerY,
+        powerScaleAngle
+    );
+    }
+
+
     // Draw grid if enabled (always on top for reference)
     if (showGrid) {
         drawGrid();
@@ -985,13 +1128,13 @@ function render() {
 function drawAnimationsExceptSnowpile() {
     Object.keys(animations).forEach(animationType => {
         // Skip snowpile animations - they'll be drawn later
-        if (animationType === 'SnowpileStartups' || animationType === 'SnowpileAdds') {
+        if (animationType === 'SnowpileStartups' || animationType === 'SnowpileAdds' || animationType === 'PowerScale1s') {
             return;
         }
         
         animations[animationType].forEach(anim => {
             if (anim.currentFrame < anim.frames.length) {
-                // Special handling for turret animations - they need rotation
+                // Special handling for turret animations - th7777777777ey need rotation
                 if (animationType === 'TurretFires') {
                     const turret = gameObjects.turret;
                     drawRotatedSprite(
@@ -1167,8 +1310,8 @@ canvas.addEventListener('mouseleave', () => {
     isDraggingAimSlider = false;
     isHoveringAimSlider = false;
     canvas.style.cursor = '';
-    coordinateDisplay.style.display = 'none';
-    playMonkeyAnimation('MonkeyIdle');
+    animations.MonkeyAim = [];
+    gameObjects.monkey.isAnimating = false;
 });
 
 // Keyboard input
@@ -1233,41 +1376,57 @@ document.addEventListener('keydown', (e) => {
     }
      // Example: Use '7' for turret extension (change as needed)
     if (e.code === 'Digit7' && !gameObjects.turret.isTurretExtending) {
+    // Turret
     gameObjects.turret.isTurretExtending = true;
-    // Remove any existing TurretFire animations
     animations.TurretFires = [];
-    // Start a new looping TurretFire animation
     triggerAnimation('TurretFire', gameObjects.turret.x, gameObjects.turret.y);
     const turretAnims = animations.TurretFires;
     if (turretAnims.length > 0) {
         turretAnims[turretAnims.length - 1].loop = true;
-        turretAnims[turretAnims.length - 1].paused = false; // Not paused
+        turretAnims[turretAnims.length - 1].paused = false;
+    }
+
+    // PowerScale
+    gameObjects.powerScale1.isPowerScaleExtending = true;
+    animations.PowerScale1s = [];
+    triggerAnimation('PowerScale1', gameObjects.powerScale1.x, gameObjects.powerScale1.y);
+    const powerAnims = animations.PowerScale1s;
+    if (powerAnims.length > 0) {
+        powerAnims[powerAnims.length - 1].loop = true;
+        powerAnims[powerAnims.length - 1].paused = false;
     }
     }
+
 });
 
 document.addEventListener('keyup', (e) => {
     keys[e.code] = false;
     if (e.code === 'Digit7' && gameObjects.turret.isTurretExtending) {
-        gameObjects.turret.isTurretExtending = false;
-        // Pause all TurretFire animations (freeze at current frame)
-        animations.TurretFires.forEach(anim => anim.paused = true);
+    // Turret
+    gameObjects.turret.isTurretExtending = false;
+    animations.TurretFires.forEach(anim => anim.paused = true);
 
-        // Calculate when to reset the turret (just before MonkeyFire ends)
-        const monkeyFireDuration = animationTemplates.MonkeyFire.frames.length * animationTemplates.MonkeyFire.frameTime;
-        const resetTime = Math.max(0, monkeyFireDuration - 180); // 200ms before end
+    // PowerScale
+    gameObjects.powerScale1.isPowerScaleExtending = false;
+    animations.PowerScale1s.forEach(anim => anim.paused = true);
 
-        // Schedule turret reset just before MonkeyFire ends
-        setTimeout(() => {
-            // Remove all TurretFire animations
-            animations.TurretFires = [];
-            // Restore turret still image
-            gameObjects.turret.isAnimating = false;
-            gameObjects.turret.stillImage = animationTemplates.TurretFire.frames[0];
-        }, resetTime);
+    // Calculate reset time (same as before)
+    const monkeyFireDuration = animationTemplates.MonkeyFire.frames.length * animationTemplates.MonkeyFire.frameTime;
+    const resetTime = Math.max(0, monkeyFireDuration - 220);
 
-        // Trigger monkey fire animation (no need for onComplete here)
-        playMonkeyAnimation('MonkeyFire');
+    setTimeout(() => {
+        // Turret reset
+        animations.TurretFires = [];
+        gameObjects.turret.isAnimating = false;
+        gameObjects.turret.stillImage = animationTemplates.TurretFire.frames[0];
+
+        // PowerScale reset
+        animations.PowerScale1s = [];
+        gameObjects.powerScale1.isAnimating = false;
+        gameObjects.powerScale1.stillImage = animationTemplates.PowerScale1.frames[0];
+    }, resetTime);
+
+    playMonkeyAnimation('MonkeyFire');
     }
 });
 
