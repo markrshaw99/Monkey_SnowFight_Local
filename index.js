@@ -6,7 +6,7 @@
 // ===========================================
 
 let isPlayer1Turn = true; // true = Player 1's turn, false = Player 2's turn
-
+let gotBananaBomb = false
 
 // GAME CONFIGURATION
 // Change this value to scale the entire canvas and everything on it
@@ -126,23 +126,51 @@ const gameObjects = {
     
     // powerScale for Player 1
     powerScale1: {
-        x: -12, // Match turret.x
-        y: 220, // Match turret.y
-        centerX: -12, // Match turret.centerX
-        centerY: 220, // Match turret.centerY
+        x: -9, // Match turret.x
+        y: 218, // Match turret.y
+        centerX: -9, // Match turret.centerX
+        centerY: 218, // Match turret.centerY
         isActive: true,
         isPowerScaleExtending: false,
         stillImage: 'Sorted Assets/sprites/PowerScale_Player2/1.svg',
     },
     // snowScale for Player 1
     snowScale1: {
-        x: 167, // Match turret.x
-        y: 300, // Match turret.y
-        centerX: 100, // Match turret.centerX
-        centerY: 379, // Match turret.centerY
+        x: 142, // Match turret.x
+        y: 264, // Match turret.y
+        centerX: 142, // Match turret.centerX
+        centerY: 264, // Match turret.centerY
         isActive: true,
         stillImage: 'Sorted Assets/sprites/SnowScale_Player2/1.svg',
+        currentFrame: 0
     },
+    // powerButton for Player 1
+    powerButton1: {
+        x: 42, // Match turret.x
+        y: 192, // Match turret.y
+        isActive: true,
+        mirrored: true,
+        activeImage: 'Sorted Assets/sprites/PowerButton_Player2/1.svg',
+        inactiveImage: 'Sorted Assets/sprites/PowerButton_Player2/2.svg',
+    },
+    // snowButton for Player 1
+    snowButton1: {
+        x: 53, // Match turret.x
+        y: 248, // Match turret.y
+        isActive: true,
+        activeImage: 'Sorted Assets/sprites/SnowButton/1.svg',
+        inactiveImage: 'Sorted Assets/sprites/SnowButton/2.svg',
+    },
+    // Chimney for Player 1
+    Chimney1: {
+        x: -32, // Match turret.x
+        y: -45, // Match turret.y
+        isActive: true,
+        activeImage: 'Sorted Assets/sprites/Chimney/1.svg',
+        inactiveImage: 'Sorted Assets/sprites/Chimney/2.svg',
+    },
+
+
 };
 
 // ===========================================
@@ -540,8 +568,10 @@ const animationTemplates = {
             'Sorted Assets/sprites/SnowScale_Player2/8.svg',
             'Sorted Assets/sprites/SnowScale_Player2/9.svg',
             'Sorted Assets/sprites/SnowScale_Player2/10.svg',
+            'Sorted Assets/sprites/SnowScale_Player2/11.svg',
+            'Sorted Assets/sprites/SnowScale_Player2/12.svg',
         ],
-        frameTime: 50,
+        frameTime: 30,
         loop: false
     }
 };
@@ -762,6 +792,11 @@ function optimizedSVGLoading() {
         'Sorted Assets/sprites/PowerScale_Player2/1.svg',
         'Sorted Assets/sprites/Chimney/1.svg',
         'Sorted Assets/sprites/Chimney/2.svg',
+        'Sorted Assets/sprites/SnowScale_Player2/1.svg',
+        'Sorted Assets/sprites/SnowButton/1.svg',
+        'Sorted Assets/sprites/SnowButton/2.svg',
+        'Sorted Assets/sprites/PowerButton_Player2/1.svg',
+        'Sorted Assets/sprites/PowerButton_Player2/2.svg',
     ];
     
     // Phase 2: High Priority - User will likely need these soon (loads in first 500ms)
@@ -794,8 +829,8 @@ function optimizedSVGLoading() {
         ...Array.from({length: 7}, (_, i) => `Sorted Assets/sprites/Icicle Shake/${i + 1}.svg`),
         // PowerScale1 1-35
         ...Array.from({length: 35}, (_, i) => `Sorted Assets/sprites/PowerScale_Player2/${i + 1}.svg`),
-        // SnowScale1 1-10
-        ...Array.from({length: 10}, (_, i) => `Sorted Assets/sprites/SnowScale_Player2/${i + 1}.svg`),
+        // SnowScale1 1-12
+        ...Array.from({length: 12}, (_, i) => `Sorted Assets/sprites/SnowScale_Player2/${i + 1}.svg`),
     ];
     
     // Phase 4: On-Demand - Only load when S key is pressed (saves bandwidth)
@@ -987,13 +1022,12 @@ function render() {
     // Background
     drawSprite('Sorted Assets/sprites/Background/Background.svg', 0, 0);
     
-    const chimneyX = -30;
-    const chimneyY = -45;
-    if (isPlayer1Turn) {
-    drawSprite('Sorted Assets/sprites/Chimney/2.svg', chimneyX, chimneyY);
-    } else {
-    drawSprite('Sorted Assets/sprites/Chimney/2.svg', chimneyX, chimneyY);
-    }
+
+    drawSprite(
+        isPlayer1Turn ? gameObjects.Chimney1.inactiveImage : gameObjects.Chimney1.inactiveImage, 
+        gameObjects.Chimney1.x, 
+        gameObjects.Chimney1.y
+    )
 
     // AimGuide_Player2 - drawn above background but behind all other elements
     if (gameObjects.aimGuidePlayer1.isVisible) {
@@ -1097,36 +1131,67 @@ function render() {
    // Draw PowerScale1 (shows animated frame if animating, otherwise still image)
     const powerScaleAngle = -Math.PI * 50 / 180; // 45 degrees anticlockwise
     const powerScale = gameObjects.powerScale1;
-    if (animations.PowerScale1s.length > 0) {
-    const anim = animations.PowerScale1s[0];
+    const imagePath = (animations.PowerScale1s.length > 0)
+    ? animations.PowerScale1s[0].frames[animations.PowerScale1s[0].currentFrame]
+    : powerScale.stillImage;
+
     drawRotatedSprite(
-        anim.frames[anim.currentFrame],
+        imagePath,
         powerScale.x,
         powerScale.y,
         powerScale.centerX,
         powerScale.centerY,
         powerScaleAngle
     );
-    } else {
-    drawRotatedSprite(
-        powerScale.stillImage,
-        powerScale.x,
-        powerScale.y,
-        powerScale.centerX,
-        powerScale.centerY,
-        powerScaleAngle
-    );
+    
+
+    if (gameObjects.powerButton1.isActive) {
+        drawMirroredSprite(
+            isPlayer1Turn ? gameObjects.powerButton1.activeImage : gameObjects.powerButton1.inactiveImage,
+            gameObjects.powerButton1.x,
+            gameObjects.powerButton1.y,
+            gameObjects.powerButton1.mirrored
+        );
     }
+
+    if (gameObjects.snowButton1.isActive) {
+        drawSprite(
+            isPlayer1Turn ? gameObjects.snowButton1.activeImage : gameObjects.snowButton1.inactiveImage,
+            gameObjects.snowButton1.x,
+            gameObjects.snowButton1.y,
+        );
+    }
+
+    const snowScale = gameObjects.snowScale1;
+    const snowScaleAngle = -Math.PI * 42 / 180; // 50 degrees anticlockwise
+
+    if (isImageReady(animationTemplates.SnowScale1.frames[snowScale.currentFrame])) {
+    const img = imageCache[animationTemplates.SnowScale1.frames[snowScale.currentFrame]];
+    ctx.save();
+    // Move to rotation center
+    ctx.translate(snowScale.centerX, snowScale.centerY);
+    // Mirror horizontally
+    ctx.scale(-1, 1);
+    // Rotate
+    ctx.rotate(snowScaleAngle);
+    // Draw sprite offset from center (mirrored, so -x)
+    ctx.drawImage(
+        img,
+        -(snowScale.x - snowScale.centerX),
+        snowScale.y - snowScale.centerY
+    );
+    ctx.restore();
+}
 
 
     // Draw grid if enabled (always on top for reference)
     if (showGrid) {
         drawGrid();
     }
-}
+    }
 
-function drawAnimationsExceptSnowpile() {
-    Object.keys(animations).forEach(animationType => {
+    function drawAnimationsExceptSnowpile() {
+        Object.keys(animations).forEach(animationType => {
         // Skip snowpile animations - they'll be drawn later
         if (animationType === 'SnowpileStartups' || animationType === 'SnowpileAdds' || animationType === 'PowerScale1s') {
             return;
@@ -1222,6 +1287,18 @@ function drawGrid() {
         ctx.lineTo(CANVAS_WIDTH, y);
         ctx.stroke();
     }
+}
+
+function onLoadButtonPressed() {
+    if (gameObjects.snowScale1.currentFrame < 10) {
+        gameObjects.snowScale1.currentFrame++;
+    }
+}
+
+// snowScale stuff
+
+if (gotBananaBomb) {
+gameObjects.snowScale1.currentFrame = 11; // Show banana bomb frame
 }
 
 function gameLoop(currentTime) {
@@ -1424,6 +1501,9 @@ document.addEventListener('keyup', (e) => {
         animations.PowerScale1s = [];
         gameObjects.powerScale1.isAnimating = false;
         gameObjects.powerScale1.stillImage = animationTemplates.PowerScale1.frames[0];
+
+        // SnowScale Reset
+        gameObjects.snowScale1.currentFrame = 0; // Resting frame
     }, resetTime);
 
     playMonkeyAnimation('MonkeyFire');
@@ -1540,11 +1620,12 @@ function addSnow() {
     }
     
     // Only allow adding snow if startup is complete, not animating, and hasn't reached max frame
-    if (snowpile.isStartupComplete && !snowpile.isAnimating && snowpile.currentFrame < snowpile.maxAddFrame && !gameObjects.monkey.isAnimating) {
+    if (snowpile.isStartupComplete && !snowpile.isAnimating && snowpile.currentFrame < snowpile.maxAddFrame && !gameObjects.monkey.isAnimating && gameObjects.snowScale1.currentFrame < 10) {
         console.log(`Adding snow to pile! Current frame: ${snowpile.currentFrame}, going to frame: ${snowpile.currentFrame + 1}`);
         
         // Increment current frame immediately
         snowpile.currentFrame++;
+        onLoadButtonPressed();
         playMonkeyAnimation('MonkeyAddSnow');
         gameObjects.snowpile.snowAmountLeft += -1;
         console.log(`Snow amount left: ${gameObjects.snowpile.snowAmountLeft}`);
