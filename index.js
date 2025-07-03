@@ -132,9 +132,9 @@ const animations = {
     MonkeyHit: [],
     MonkeyGetUp: [],
     MonkeyAddSnow: [],
-    MonkeyAim: [],
-    MonkeyFire: [],
+    MonkeyAim: [],  
     TurretFires: [],
+    MonkeyFire: [],
     SnowpileStartups: [], // For the initial 1-46 frame animation
     SnowpileAdds: [], // For additional snow animations
 };
@@ -418,9 +418,43 @@ const animationTemplates = {
     
     TurretFire: {
         frames: [
-            'Sorted Assets/sprites/TurretExtension_Player1/1.svg' // Placeholder, replace with actual fire frames if available
+            'Sorted Assets/sprites/TurretExtension_Player1/1.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/2.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/3.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/4.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/5.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/6.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/7.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/8.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/9.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/10.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/11.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/12.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/13.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/14.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/15.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/16.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/17.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/18.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/19.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/20.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/21.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/22.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/23.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/24.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/25.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/26.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/27.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/28.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/29.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/30.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/31.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/32.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/33.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/34.svg',
+            'Sorted Assets/sprites/TurretExtension_Player1/35.svg',
         ],
-        frameTime: 80,
+        frameTime: 50,
         loop: false
     }
 };
@@ -639,15 +673,8 @@ function optimizedSVGLoading() {
     
     // Phase 2: High Priority - User will likely need these soon (loads in first 500ms)
     const highPriority = [
-        ...Array.from({length: 7}, (_, i) => `Sorted Assets/sprites/Icicle Shake/${i + 1}.svg`),
-        ...Array.from({length: 15}, (_, i) => `Sorted Assets/sprites/TurretExtension_Player1/${i + 1}.svg`),
+        //Snowpile Startup
         ...Array.from({length: 46}, (_, i) => `Sorted Assets/sprites/Snowpile_Player1/${i + 1}.svg`),
-        // MonkeyIdle 1-12
-        ...Array.from({length: 12}, (_, i) => `Sorted Assets/sprites/MonkeyIdle_Player1/${i + 1}.svg`),
-        // MonkeyWin 117-123
-        ...Array.from({length: 7}, (_, i) => `Sorted Assets/sprites/MonkeyWin_Player1/${i + 117}.svg`),
-        // MonkeyLose 124-133
-        ...Array.from({length: 10}, (_, i) => `Sorted Assets/sprites/MonkeyLose_Player1/${i + 124}.svg`),
         // MonkeyHit 95-104
         ...Array.from({length: 10}, (_, i) => `Sorted Assets/sprites/MonkeyHit_Player1/${i + 95}.svg`),
         // MonkeyGetUp 105-116
@@ -657,13 +684,21 @@ function optimizedSVGLoading() {
         // MonkeyAim 13-29
         ...Array.from({length: 17}, (_, i) => `Sorted Assets/sprites/MonkeyAim_Player1/${i + 13}.svg`),
         // MonkeyFire 30-80
-        ...Array.from({length: 51}, (_, i) => `Sorted Assets/sprites/MonkeyFire_Player1/${i + 30}.svg`)
+        ...Array.from({length: 51}, (_, i) => `Sorted Assets/sprites/MonkeyFire_Player1/${i + 30}.svg`),
+        // MonkeyIdle 1-12
+        ...Array.from({length: 12}, (_, i) => `Sorted Assets/sprites/MonkeyIdle_Player1/${i + 1}.svg`),
     ];
     
     // Phase 3: Medium Priority - Background loading (loads gradually over 3 seconds)
     const mediumPriority = [
-        ...Array.from({length: 20}, (_, i) => `Sorted Assets/sprites/TurretExtension_Player1/${i + 16}.svg`)
-        // No need to add monkey frames here, all are in highPriority
+        //Turret Extension
+        ...Array.from({length: 35}, (_, i) => `Sorted Assets/sprites/TurretExtension_Player1/${i + 1}.svg`),
+               // MonkeyWin 117-123
+        ...Array.from({length: 7}, (_, i) => `Sorted Assets/sprites/MonkeyWin_Player1/${i + 117}.svg`),
+        // MonkeyLose 124-133
+        ...Array.from({length: 10}, (_, i) => `Sorted Assets/sprites/MonkeyLose_Player1/${i + 124}.svg`),
+        // Icicle Shake
+        ...Array.from({length: 7}, (_, i) => `Sorted Assets/sprites/Icicle Shake/${i + 1}.svg`),
     ];
     
     // Phase 4: On-Demand - Only load when S key is pressed (saves bandwidth)
@@ -747,6 +782,10 @@ function updateAnimations(deltaTime) {
         
         for (let i = animationList.length - 1; i >= 0; i--) {
             const anim = animationList[i];
+
+            if (animationType === 'TurretFires' && anim.paused) {
+                continue; // Skip advancing this animation if paused
+            }
             
             anim.timeSinceLastFrame += deltaTime;
             
@@ -754,6 +793,13 @@ function updateAnimations(deltaTime) {
             if (anim.timeSinceLastFrame >= anim.frameTime) {
                 anim.currentFrame++;
                 anim.timeSinceLastFrame = 0;
+
+            // Special handling for TurretFires: freeze on last frame if looping
+                if (animationType === 'TurretFires' && anim.loop && anim.currentFrame >= anim.frames.length) {
+                    anim.currentFrame = anim.frames.length - 1; // Stay on last frame
+                    anim.paused = true; // Pause so it doesn't advance further
+                    continue;
+                }    
                 
                 // Check if animation is finished
                 if (anim.currentFrame >= anim.frames.length) {
@@ -1075,6 +1121,7 @@ canvas.addEventListener('mousedown', (e) => {
     const handleRadius = Math.sqrt((aimSlider.x - aimSlider.centerX)**2 + (aimSlider.y - aimSlider.centerY)**2);
     if (Math.abs(r - handleRadius) < 10 && gameObjects.aimSlider.isActive) { // Slightly larger hit area for usability
         isDraggingAimSlider = true;
+        playMonkeyAnimation('MonkeyAim');
         e.preventDefault();
     }
 });
@@ -1108,14 +1155,20 @@ canvas.addEventListener('mousemove', (e) => {
 });
 
 canvas.addEventListener('mouseup', (e) => {
+    console.log('Mouse Up')
     isDraggingAimSlider = false;
     if (!isHoveringAimSlider) canvas.style.cursor = '';
+    animations.MonkeyAim = [];
+    gameObjects.monkey.isAnimating = false;
 });
+
 canvas.addEventListener('mouseleave', () => {
+    console.log('Mouse Leave')
     isDraggingAimSlider = false;
     isHoveringAimSlider = false;
     canvas.style.cursor = '';
     coordinateDisplay.style.display = 'none';
+    playMonkeyAnimation('MonkeyIdle');
 });
 
 // Keyboard input
@@ -1160,7 +1213,8 @@ document.addEventListener('keydown', (e) => {
     }
     // Monkey Animations Testing Shortcuts
     if (e.code === 'Digit1') {
-        playMonkeyAnimation('MonkeyIdle');
+        triggerAnimation('TurretFire', gameObjects.turret.x, gameObjects.turret.y);
+        playMonkeyAnimation('MonkeyFire');
     }
     if (e.code === 'Digit2' && !gameObjects.monkey.isAnimating) {
         playMonkeyAnimation('MonkeyWin');
@@ -1174,10 +1228,47 @@ document.addEventListener('keydown', (e) => {
     if (e.code === 'Digit5' && !gameObjects.monkey.isAnimating) {
         playMonkeyAnimation('MonkeyGetUp');
     }
+    if (e.code === 'Digit6' && !gameObjects.monkey.isAnimating) {
+        playMonkeyAnimation('MonkeyAim');
+    }
+     // Example: Use '7' for turret extension (change as needed)
+    if (e.code === 'Digit7' && !gameObjects.turret.isTurretExtending) {
+    gameObjects.turret.isTurretExtending = true;
+    // Remove any existing TurretFire animations
+    animations.TurretFires = [];
+    // Start a new looping TurretFire animation
+    triggerAnimation('TurretFire', gameObjects.turret.x, gameObjects.turret.y);
+    const turretAnims = animations.TurretFires;
+    if (turretAnims.length > 0) {
+        turretAnims[turretAnims.length - 1].loop = true;
+        turretAnims[turretAnims.length - 1].paused = false; // Not paused
+    }
+    }
 });
 
 document.addEventListener('keyup', (e) => {
     keys[e.code] = false;
+    if (e.code === 'Digit7' && gameObjects.turret.isTurretExtending) {
+        gameObjects.turret.isTurretExtending = false;
+        // Pause all TurretFire animations (freeze at current frame)
+        animations.TurretFires.forEach(anim => anim.paused = true);
+
+        // Calculate when to reset the turret (just before MonkeyFire ends)
+        const monkeyFireDuration = animationTemplates.MonkeyFire.frames.length * animationTemplates.MonkeyFire.frameTime;
+        const resetTime = Math.max(0, monkeyFireDuration - 180); // 200ms before end
+
+        // Schedule turret reset just before MonkeyFire ends
+        setTimeout(() => {
+            // Remove all TurretFire animations
+            animations.TurretFires = [];
+            // Restore turret still image
+            gameObjects.turret.isAnimating = false;
+            gameObjects.turret.stillImage = animationTemplates.TurretFire.frames[0];
+        }, resetTime);
+
+        // Trigger monkey fire animation (no need for onComplete here)
+        playMonkeyAnimation('MonkeyFire');
+    }
 });
 
 // Add this function to reset the icicle (for testing):
